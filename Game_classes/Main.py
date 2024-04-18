@@ -6,65 +6,20 @@ Created on Mon Apr  1 18:30:45 2024
 
 import Fabrica
 import Tabuleiro
+import Jogador
 
 #Start class ------------------------------------------------------------------
 def main():
-    #Inicializar a fabrica
-    tb = Tabuleiro.Tabuleiro_DeJogo()
 
-    branco  = [1,1]
-    azul    = [0,0,0]
-    verme   = [3,3,3,3,3]
-    preto   = [2,2,2,2,2,2,2]
-    amare   = [4,4,4,4,4,4,4,4,4]
+    fab = Fabrica.Fabrica()
+    luiz = Jogador.Jogador()
 
-    #Testar funçoes
-    """
-    line = 1
-    flr = tb.pattern[line]
-    flr[0][0] = 2
-    flr[0][1] = True
-    flr[1][0] = 2
-    flr[1][1] = True
+    print(fab)
 
-    # ok = print(tb.how_is_full_line(line))
-    # ok print(tb.is_tile_um(azul))
-    # ok print(tb.cement_line(branco, 1))
-    # ok tb.cement_floor(vermelho)
-    """
-
-    tb.cement_line(branco, 0)
-    print(tb)
-
-    tb.cement_line(azul, 1)
-    print(tb)
-
-    tb.cement_line(verme, 2)
-    print(tb)
-    tb.cement_line(preto, 3)
-    print(tb)
-    tb.cement_line(amare, 4)
-
-    #Imprimir um tabuleiro
-    print(tb)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    while True:
+        luiz.playar(fab)
+        print(luiz.board)
+        print(fab)
 
 #End class --------------------------------------------------------------------
 

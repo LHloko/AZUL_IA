@@ -77,7 +77,7 @@ Lixo do tabuleiro:
 
     '''
     Entrada: list de ceramicas tiles
-    Saida: Verdadeiro para caso  
+    Saida: Vazio 
     Pega a list tiles e coloca no piso, caso exceda envia para o lixo
     '''
     def cement_floor(self, tiles):
@@ -105,6 +105,15 @@ Lixo do tabuleiro:
     Pega a list tiles e coloca no piso, caso exceda envia para o lixo
     '''
     def cement_line(self, tiles, line):
+        #se tiver o -1
+        self.is_tile_um(tiles)
+
+        #se escolhido o piso
+        if line == 5:
+            self.cement_floor(tiles)
+            return True
+
+        #se escolhido uma linha adjacente
         ln_adj = self.pattern[line]
         cor = tiles[0]
         cpv = self.how_is_full_line(line)
