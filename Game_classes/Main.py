@@ -7,19 +7,25 @@ Created on Mon Apr  1 18:30:45 2024
 import Fabrica
 import Tabuleiro
 import Jogador
+import Estados
 
 #Start class ------------------------------------------------------------------
 def main():
 
-    fab = Fabrica.Fabrica()
-    luiz = Jogador.Jogador()
+    ceramicas = [[0],[0],[3],[2],[1]]
 
-    print(fab)
+    player = Jogador.Jogador('luiz')
+    print(player)
 
-    while True:
-        luiz.playar(fab)
-        print(luiz.board)
-        print(fab)
+
+    #tentando preencher uma linha inteira
+    for c in ceramicas:
+        player.colocar_no_tabuleiro(c)
+        print(player)
+        player.pontuar()
+        print(player)
+
+
 
 #End class --------------------------------------------------------------------
 
@@ -30,6 +36,49 @@ if __name__ == "__main__":
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#Start class ------------------------------------------------------------------
+def jogando_v1():
+
+    fab = Fabrica.Fabrica()
+    luiz = Jogador.Jogador("Luiz")
+    vik = Jogador.Jogador("Viktor")
+
+    dados = [fab, 0, [luiz, vik]]
+
+    estados = Estados.Estados(dados)
+
+    while not estados.fim_de_turno():
+        for i in dados[2]:
+            print(fab)
+            print("************** Player", i.get_name(),"**************\n")
+            i.playar(fab)
+            print(i.board)
+
+
+    print("************** Mamona 01 gameplay **************\n")
+    print(luiz.board)
+
+    print("************** Mamona 02 gameplay **************\n")
+    print(vik.board)
+
+#End class --------------------------------------------------------------------
 
 
 

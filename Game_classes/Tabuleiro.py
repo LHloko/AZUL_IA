@@ -10,11 +10,12 @@ definir um tabuleiro
 #Start class ------------------------------------------------------------------
 class Tabuleiro_DeJogo():
 
-    def __init__(self):
+    def __init__(self, name):
         self.floor = []     #Piso do tabuleiro
         self.wall = []      #Parede de ceramica
         self.pattern = []   #Parede adjacente
         self.trash = []     #Lixo do tabuleiro
+        self.name_player = name
 
         #Construindo a parede
         for i in range(5):
@@ -43,8 +44,11 @@ class Tabuleiro_DeJogo():
     def get_floor(self):
         return self.floor
 
-    def get_pattern(self):
-        return self.pattern
+    def get_pattern(self, line=None):
+        if line is None:
+            return self.pattern
+        else:
+            return self.pattern[line]
 
     def set_wall(self, wll):
         self.wall = wll
@@ -57,7 +61,7 @@ class Tabuleiro_DeJogo():
 
     def __str__(self):
         return f"""
-TABULEIRO: 
+TABULEIRO do {self.name_player}: 
 -----------------------------------------------------------------------------------------------------------------------------------*
 {self.wall[0]}  <  {self.pattern[0]}
 {self.wall[1]}  <  {self.pattern[1]}
@@ -119,6 +123,11 @@ Lixo do tabuleiro:
         cpv = self.how_is_full_line(line)
         rest = []
 
+        #verifica se ja tem ceramica na parede
+        if self.wall_grouted(cor, line):
+            print("ceramica ja esta na parede! ")
+            return False
+
         #verificar se a linha esta cheia
         if cpv == -2:
             print("linha cheia [!]")
@@ -144,25 +153,30 @@ Lixo do tabuleiro:
 
             return True
 
+        if cpv == cor:
+            idx = 0
+            while ln_adj[idx][1] == True:
+                idx += 1
+
+            print("entrou aq ,posicao livre = ", idx)
+            print("tiles -> ", tiles)
+            #meter os tijolos na linha
+            for i in range(idx, idx+len(tiles)):
+                if i < len(ln_adj):
+                    ln_adj[i][0] = tiles.pop()
+                    ln_adj[i][1] = True
+
+                else: #linha estourada
+                    rest.append(tiles.pop())
+
+            self.cement_floor(rest)
+
+            return True
+
         #verificar se a linha esta com outra cor
         if cpv != cor:
             print("linha ja contem ceramicas de outra cor [!]")
             return False
-
-
-    '''
-    Entrada: Um inteiro referente a cor da ceramica, color  
-    Saida: Verdadeiro caso todas as linhas estejam preenchidas com cores 
-            diferentes de color 
-    def full_color_dif(self, color):
-        for i in range(5):
-            #Se tiver pelomenos uma igua = retorna falso
-            if self.how_is_full_line(i) == color:
-                return False
-
-        return True
-    '''
-
 
     '''
     Entrada: Vazia  
@@ -178,18 +192,37 @@ Lixo do tabuleiro:
 
     '''
     Entrada: List tiles com as ceramicas pegas
-    Saida: Retorna a list tiles
+    Saida: Retorna Verdadeiro se tiles conter o -1 e falso senao 
     Verifica se a tiles contem o -1 se tiver o coloca no piso 
+    caso o piso esteja cheio, envia a peça do inicio para o lixo do tabuleiro
+    senao estiver cheio coloca a peça no fim do piso e -1 no começo
     '''
     def is_tile_um(self, tiles):
         flr = self.floor
 
-        #Coloca o -1 na primeira posiçao do piso
+        #Verifica se o -1 exite na primeira posiçao do tiles
         if tiles[0] == -1:
+
+            #Verifica se o piso ja esta cheio
+            if flr[6][1] == True:
+                self.trash.append(flr[0][0])
+
+            else:
+                idx = 0
+                while flr[idx][1] == True:
+                    idx += 1
+
+                flr[idx][0] = flr[0][0]
+                flr[idx][1] = True
+
+            #Coloca o -1 na posiçao inicial
             flr[0][0] = tiles.pop(0)
             flr[0][1] = True
 
-        return tiles
+            return True
+
+        else:
+            return False
 
 
     '''
@@ -210,5 +243,194 @@ Lixo do tabuleiro:
 
         #Retorna o valor da cor ja presente
         return flr[0][0]
+
+###############################################################################
+
+    '''
+    Entrada: Vazia 
+    Saida: 
+
+    '''
+    def emparedar(self):
+        '''
+        # Verificas linha por linha, qual esta completa
+        # Preencher na parede a linha completa 
+        # Somar os pontos gerados nessa alocaçao 
+        # Jogar no lixo as ceramicas sobressalentes 
+        '''
+        pontos = 0
+
+        for l in range(5):
+            if self.line_adj_is_full(l):
+                pontos += 1
+                #cor da ceramica a ser colocada na parede
+                cor = self.pattern[l][0][0]
+
+                #encontrar a linha e a coluna na parede que tem a cor e meter
+                w = self.wall[l]
+                column = 0
+                for clm in w:
+                    if clm[0] == cor:
+                        column = w.index(clm)
+                        clm[1] = True
+                        break
+
+                #Somar os pontos
+                pontos += self.somar_ceramicas(l, column)
+
+                #Resetar as posiçoes e manda pro lixo
+                pattern = self.get_pattern(l)
+
+                for cell in pattern:
+                    cell[0] = ''
+                    cell[1] = False
+
+                for _ in range(len(pattern) - 1):
+                    self.trash.append(cor)
+                ''' 
+                '''
+
+        return pontos
+
+
+    '''
+    Entrada: Linha adjacente
+    Saida: Verdadeiro se a linha adjacente estiver cheia, falso senao
+    '''
+    def line_adj_is_full(self, line):
+        line_adj = self.pattern[line]
+        last_pos = len(line_adj)-1
+
+        if line_adj[last_pos][1] == True:
+            return True
+        else:
+            return False
+
+
+    '''
+    Entrada: linha e coluna da parede onde foi posto uma ceramica 
+    Saida: Quantidade de ceramicas adjacentes a esta, na horizontal e vertical
+    '''
+    def somar_ceramicas(self, line, column):
+        wall = self.wall
+        pontos = 0
+
+        l = line
+        c = column
+
+        #andar para cima
+        while l > 0:
+            cel_cima = wall[l-1][c]
+
+            if cel_cima[1] == True:
+                pontos += 1
+                l = l-1
+            else:
+                break
+
+        l = line
+        #andar para baixo
+        while l < 4:
+            cel_baixo = wall[l+1][c]
+
+            if cel_baixo[1] == True:
+                pontos += 1
+                l = l+1
+            else:
+                break
+
+        l = line
+        c = column
+        #andar para tras
+        while c > 0:
+            cel_tras = wall[l][c-1]
+
+            if cel_tras[1] == True:
+                pontos += 1
+                c = c-1
+            else:
+                break
+
+        c = column
+        #andar para frente
+        while c < 4:
+            cel_frente = wall[l][c+1]
+
+            if cel_frente[1] == True:
+                pontos += 1
+                c = c+1
+            else:
+                break
+
+        #retornar os pontos
+        return pontos
+
+
+    '''
+    Entrada: Vazia 
+    Saida: Quantidade de pontos negativos oriundos do piso 
+    '''
+    def des_somar_ceramicas(self):
+        floor = self.floor
+        count = 0
+        pontos = 0
+
+        #calcula os pontos a serem decrescentados e reseta o piso
+        for f in floor:
+            if f[1]:
+                self.trash.append(f[0])
+
+                if count < 2:
+                    f[0] = -1
+                    pontos += 1
+
+                elif count < 4:
+                    f[0] = -2
+                    pontos += 2
+
+                elif count < 7:
+                    f[0] = -3
+                    pontos += 3
+
+                count +=1
+            else:
+                return pontos
+
+
+        return pontos
+
+    '''
+    Entrada: Cor da ceramica e linha adjacente 
+    Saida: Verdadeiro caso a ceramica da cor passada ja esteja na parede e 
+    falso senao
+    '''
+    def wall_grouted(self, color, line):
+        wall = self.wall[line]
+
+        for w in wall:
+            if w[0] == color:
+                if w[1] == True:
+                    return True
+
+        return False
+
+    '''
+    Entrada: Vazia
+    Saida: Verdadeiro caso alguma linha da parede esteja cheia 
+    '''
+    def is_line_wall_full(self):
+        wall = self.wall
+        count = 0
+
+        for line_wall in wall:
+            for cell in line_wall:
+                if cell[1] == False:
+                    count += 1
+
+            if count == 0:
+                return True
+
+        return False
+
 
 #End class --------------------------------------------------------------------

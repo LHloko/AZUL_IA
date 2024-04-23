@@ -10,9 +10,27 @@ import Tabuleiro
 #Start class ------------------------------------------------------------------
 class Jogador():
 
-    def __init__(self):
-        self.board = Tabuleiro.Tabuleiro_DeJogo()
+    def __init__(self, name):
+        self.board = Tabuleiro.Tabuleiro_DeJogo(name)
         self.score = 0
+        self.name = name
+
+    def get_name(self):
+        return self.name
+
+    def get_tabuleiro(self):
+        return self.board
+
+    def get_score(self):
+        return self.score
+
+    def __str__(self):
+        return f'''
+PLAYER [[[ {self.name} ]]]
+SCORE = {self.score}
+{self.board}
+    '''
+
 
     '''
     Entrada: fabrica do jogo, e o local sendo 1 para fabrica ou 2 para o chao
@@ -63,7 +81,7 @@ class Jogador():
 
         #verifica se e possivel pegar ceramicas no lugar passado
         while not local:
-            p1 = int(input("\nTente outro Lugar: \n"))
+            p1 = int(input("\nTente outro Lugar: "))
             local = self.escolher_fab_chao(fb,p1)
 
         #Escolheu -> Fabrica
@@ -101,5 +119,35 @@ class Jogador():
         while not self.board.cement_line(ceramicas, line):
             line = int(input("Escolha outra linha:\n[0 - 4] linhas adjacentes\n  [5] piso\n"))
 
+
+###############################################################################
+
+    '''
+    Entrada: Vazia 
+    Saida: Vazia 
+    Soma os pontos da tabela e a reseta ao fim de uma rodada de jogo  
+    '''
+    def pontuar(self):
+        self.score += self.board.emparedar()
+        self.score -= self.board.des_somar_ceramicas()
+
+    '''
+    Entrada: Vazia 
+    Saida: Vazia 
+    Soma os pontos da tabela e a reseta ao fim de um jogo  
+    '''
+    def pontuar_final(self):
+        print("fim de jogo")
+
+    '''
+    Entrada: Vazio
+    Saida: Retorna verdadeiro caso haja uma linha do tabuleiro desse jogador que
+    esteja completa, indicando o fim do jogo 
+    '''
+    def board_full(self):
+        if self.board.is_line_wall_full():
+            return True
+
+        return False
 
 #End class --------------------------------------------------------------------
