@@ -136,8 +136,8 @@ SCORE = {self.score}
     Saida: Vazia 
     Soma os pontos da tabela e a reseta ao fim de um jogo  
     '''
-    def pontuar_final(self):
-        print("fim de jogo")
+    def pontuar_ultimate_final(self):
+        self.score += self.board.last_pontuar()
 
     '''
     Entrada: Vazio

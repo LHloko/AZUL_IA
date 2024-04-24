@@ -11,21 +11,62 @@ import Estados
 
 #Start class ------------------------------------------------------------------
 def main():
+    fab = Fabrica.Fabrica()
+    luiz = Jogador.Jogador("Luiz")
+    vik = Jogador.Jogador("Viktor")
 
-    ceramicas = [[0],[0],[3],[2],[1]]
-
-    player = Jogador.Jogador('luiz')
-    print(player)
-
+    players = [luiz, vik]
+    dados = [fab, fab.pocket, players]
+    
 
     #tentando preencher uma linha inteira
+    ceramicas = [[0],[4],[3],[2]]
     for c in ceramicas:
-        player.colocar_no_tabuleiro(c)
-        print(player)
-        player.pontuar()
-        print(player)
+        luiz.colocar_no_tabuleiro(c)
+        luiz.pontuar()
 
+    #zerando algumas fabricas
+    fab.factory_board[0] = []
+    fab.factory_board[1] = []
+    fab.factory_board[2] = []
+    fab.factory_board[3] = []
+    fab.factory_board[4] = [1,2,2,2]
 
+    estado = Estados.Estados(dados)
+
+    while not estado.is_game_over():
+        #start do game
+        while not estado.fim_de_turno():
+            for p in players:
+                if fab.is_board_empty() and fab.is_floor_empty():
+                    break
+                print("-----------------------------------------------------------------------------------------------------------------------------------*")
+
+                print(fab)
+                print(f"[ JOGADOR {p.get_name()} EH SUA VEZ ]")
+                print(p)
+                p.playar(fab)
+                print(p)
+                
+                print("-----------------------------------------------------------------------------------------------------------------------------------*")
+
+            #Colocar o player com o -1 no inicio da lista de jogadores
+            estado.first_player()
+                
+
+        #final do turno
+        print("-----------------------------------------------------------------------------------------------------------------------------------*")
+        print("       Fim Da Rodada")
+        print("-----------------------------------------------------------------------------------------------------------------------------------*")
+        estado.game_player_status()
+
+        print("-----------------------------------------------------------------------------------------------------------------------------------*")
+        print("       NOVA Rodada")
+        print("-----------------------------------------------------------------------------------------------------------------------------------*")
+        estado.iniciar_turno()
+
+    #Concluindo o JOGO
+    estado.fim_de_jogo()
 
 #End class --------------------------------------------------------------------
 
@@ -79,6 +120,30 @@ def jogando_v1():
     print(vik.board)
 
 #End class --------------------------------------------------------------------
+
+
+
+#Start class ------------------------------------------------------------------
+def jogando_v2():
+
+
+
+    ceramicas = [[0],[4],[3],[2],[1]]
+
+    player = Jogador.Jogador('luiz')
+    print(player)
+
+
+    #tentando preencher uma linha inteira
+    for c in ceramicas:
+        player.colocar_no_tabuleiro(c)
+        print(player)
+        player.pontuar()
+        print(player)
+
+
+#End class --------------------------------------------------------------------
+
 
 
 

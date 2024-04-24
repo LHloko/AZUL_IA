@@ -17,7 +17,7 @@ class Fabrica():
         #Variaveis de uma Mesa
         self.num_factorys = 5       #Define o numero padrao de fabricas para 2 players
         self.factory_board = []     #Cria a o circulo de fabricas como uma list
-        self.factory_floor = [-1]   #Cria o chao de fabrica como uma list
+        self.factory_floor = []   #Cria o chao de fabrica como uma list
         self.pocket = Saco.Saco()   #Instancia de um saco (rsrs) de ceramicas
 
         self.manufacture_board()    #Inicia a mesa de fabricas
@@ -88,7 +88,7 @@ class Fabrica():
     '''
     Entrada: Vazio
     Saida: Preenche a matriz factory_board com peças aleatorias e descontadas 
-    do saco, e reinicia o chao de fabrica com -1(rsrs)
+    do saco, e reinicia o chao de fabrica com -1
     
     '''
     def manufacture_board(self):
@@ -96,7 +96,14 @@ class Fabrica():
             facture = self.manufacture() #Isso eh uma Fabrica recebendo 4 ceramicas
             self.factory_board.append(facture)
 
-        self.factory_floor[0] = -1
+        self.factory_floor.append(-1)
+
+    def re_manufacture_board(self):
+        #Variaveis de uma Mesa
+        self.factory_board = []     #Cria a o circulo de fabricas como uma list
+        self.factory_floor = []   #Cria o chao de fabrica como uma list
+
+        self.manufacture_board()    #Inicia a mesa de fabricas
 
     '''
     Entrada: A fabrica escolhida, factury

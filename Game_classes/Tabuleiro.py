@@ -44,6 +44,9 @@ class Tabuleiro_DeJogo():
     def get_floor(self):
         return self.floor
 
+    def get_trash(self):
+        return self.trash
+
     def get_pattern(self, line=None):
         if line is None:
             return self.pattern
@@ -379,6 +382,7 @@ Lixo do tabuleiro:
         for f in floor:
             if f[1]:
                 self.trash.append(f[0])
+                f[1] = False
 
                 if count < 2:
                     f[0] = -1
@@ -395,7 +399,6 @@ Lixo do tabuleiro:
                 count +=1
             else:
                 return pontos
-
 
         return pontos
 
@@ -420,9 +423,9 @@ Lixo do tabuleiro:
     '''
     def is_line_wall_full(self):
         wall = self.wall
-        count = 0
 
         for line_wall in wall:
+            count = 0
             for cell in line_wall:
                 if cell[1] == False:
                     count += 1
@@ -432,5 +435,77 @@ Lixo do tabuleiro:
 
         return False
 
+
+    def last_pontuar(self):
+        pontos = 0
+        wall = self.wall
+
+        #somar na horizontal
+        for line_wall in wall:
+            count = 0
+            for cell in line_wall:
+                if cell[1] == False:
+                    count += 1
+
+            if count == 0:
+                pontos += 2
+
+
+        #somar na vertical
+        for c in range(5):
+            count = 0
+            for line_wall in wall:
+                if line_wall[0][1] == False:
+                    count += 1
+            if count == 0:
+                pontos += 7
+
+        #somar diagonal
+
+            #amarelo 01
+        if wall[4][0][1] == True:
+            pontos += 10
+
+            #vermelho 01
+        red_01 = [wall[3][0][1], wall[4][1][1]]
+        if all(red_01):
+            pontos += 10
+
+            #preto 01
+        blck_01 = [wall[2][0][1], wall[3][1][1], wall[4][2][1]]
+        if all(blck_01):
+            pontos += 10
+
+            #branco 01
+        brc_01 = [wall[4][3][1], wall[3][2][1], wall[2][1][1], wall[1][0][1]]
+        if all(brc_01):
+            pontos += 10
+
+            #azul mid
+        perfect_blue = [wall[0][0][1], wall[1][1][1], wall[2][2][1], wall[3][3][1], wall[4][4][1]]
+        if all(perfect_blue):
+            print("perfect blue ")
+            pontos += 10
+
+            #amarelo 02
+        yel_01 = [wall[3][4][1], wall[2][3][1], wall[1][2][1], wall[0][1][1]]
+        if all(yel_01):
+            pontos += 10
+
+            #vermelho 02
+        red_02 = [wall[2][4][1], wall[1][3][1], wall[0][2][1]]
+        if all(red_02):
+            pontos += 10
+
+            #preto 02
+        blck_02 = [wall[1][4][1], wall[0][3][1]]
+        if all(blck_02):
+            pontos += 10
+
+            #branco 02
+        if wall[0][4][1] == True:
+            pontos += 10
+
+        return pontos
 
 #End class --------------------------------------------------------------------
