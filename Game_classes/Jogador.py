@@ -31,6 +31,20 @@ SCORE = {self.score}
 {self.board}
     '''
 
+    '''
+    Entrada: Vazio 
+    Saida: Verdadeiro caso o jogador contenha 0 -1 e falso senao 
+    '''
+    def me_first(self):
+        lixo = self.board
+        lixo = lixo.get_trash()
+        for i, um in enumerate(lixo):
+            if um == -1:
+                lixo.pop(i)
+                return True
+
+        return False
+
 
     '''
     Entrada: fabrica do jogo, e o local sendo 1 para fabrica ou 2 para o chao

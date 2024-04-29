@@ -14,11 +14,12 @@ def main():
     fab = Fabrica.Fabrica()
     luiz = Jogador.Jogador("Luiz")
     vik = Jogador.Jogador("Viktor")
+    jean = Jogador.Jogador("Jean")
 
-    players = [luiz, vik]
+    players = [luiz, vik, jean]
     dados = [fab, fab.pocket, players]
     
-
+    '''
     #tentando preencher uma linha inteira
     ceramicas = [[0],[4],[3],[2]]
     for c in ceramicas:
@@ -31,6 +32,7 @@ def main():
     fab.factory_board[2] = []
     fab.factory_board[3] = []
     fab.factory_board[4] = [1,2,2,2]
+    '''
 
     estado = Estados.Estados(dados)
 
@@ -38,7 +40,7 @@ def main():
         #start do game
         while not estado.fim_de_turno():
             for p in players:
-                if fab.is_board_empty() and fab.is_floor_empty():
+                if fab.is_board_empty() and fab.is_floor_empty():#caso o jogo termine no meio de um dos jogadores
                     break
                 print("-----------------------------------------------------------------------------------------------------------------------------------*")
 
@@ -50,8 +52,8 @@ def main():
                 
                 print("-----------------------------------------------------------------------------------------------------------------------------------*")
 
-            #Colocar o player com o -1 no inicio da lista de jogadores
-            estado.first_player()
+        #Colocar o player com o -1 no inicio da lista de jogadores
+        estado.first_player()
                 
 
         #final do turno

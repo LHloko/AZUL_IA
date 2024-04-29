@@ -88,29 +88,23 @@ class Estados():
 
     '''
     Entrada: Vazia
-    Saida: O indice do player que tem o -1, senao falso em erro
-    '''
-    def less_one_player(self):
-        idx = 0
-        for p in self.players:
-            tab = p.get_tabuleiro()
-            floor = tab.get_floor()
-            if -1 == floor[0][0]:
-                return idx
-            idx += 1
-
-        return False
-
-    '''
-    Entrada: Vazia
     Saida: Vazia
-    Pega o indice do jogador que tem o -1 no piso de seu tabuleiro e o coloca 
-    no inicio da list de players, sendo o primeiro a iniciar a rodada
+    Verifica qual jogador tem o -1 e o coloca no inicio da list de jogadores
     '''
     def first_player(self):
-        um = self.less_one_player()
-        self.players[0], self.players[um] = self.players[um], self.players[0]
+        players = self.players
+        for i, p in enumerate(players):
+            if p.me_first():
+                print('O Jogador ', p.get_name(), 'e o primeiro a jogar')
+                print(players)
+                players.pop(i)
+                players.insert(0, p)
+                print(players)
+                break
+
         return True
+
+
 
     '''
     Entrada: Vazia
