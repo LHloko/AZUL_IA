@@ -14,6 +14,7 @@ import Jogador
 import Estados
 
 class AzulEnv(AECEnv):
+    
     def __init__(self):
         super().__init__()
 
@@ -26,6 +27,7 @@ class AzulEnv(AECEnv):
 
         # Estado inicial do jogo
         self.estado = Estados.Estados(self.dados)
+
 
     '''
     Entrada: agent 
@@ -62,7 +64,7 @@ class AzulEnv(AECEnv):
         players_observations = [np.array(board) for board in players_boards]
 
         # Concatenar todas as observações em uma única matriz
-        observations = np.concatenate((factory_observations, floor_observations, *players_observations), axis=0)
+        observations = np.concatenate((factory_observations, floor_observations, *players_observations), axis=1)
 
         # factories [5x4]  #
         # floor     [1x1]  #

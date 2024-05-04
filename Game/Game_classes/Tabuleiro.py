@@ -463,7 +463,6 @@ Lixo do tabuleiro:
             for cell in line_wall:
                 if cell[1] == False:
                     count += 1
-            print(line_wall, 'seu contador = ', count)
 
             if count == 0:
                 return True

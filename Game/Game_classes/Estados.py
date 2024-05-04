@@ -6,6 +6,7 @@ Created on Wed Apr  3 09:48:11 2024
 
 '''Criar funçoes que qualificam quao bom eh aquele estado de tabuleiro'''
 
+import numpy as np
 
 #Start class ------------------------------------------------------------------
 class Estados():
@@ -17,7 +18,8 @@ class Estados():
         self.fab = dados[0]
         self.pocket = dados[1]
         self.players = dados[2]
-        self.first_ply = None
+
+        self.static_players = dados[2]
 
     '''
     Entrada: vazia 
@@ -160,5 +162,141 @@ class Estados():
                 return True
 
         return False
+
+###############################################################################
+    '''
+    Entrada: Vazia 
+    Saida: Um dicionario com o estado atual do jogo  
+    '''
+    def get_states(self):
+        factories     = self._format_factories()
+        factory_floor = self._format_fac_floor()
+        players_board = self._format_players()
+
+        print(factories)
+        print(factory_floor)
+        print(players_board)
+
+        ba = np.concatenate((factories, factory_floor), axis=1)
+        print(ba)
+        input()
+
+        malandro = np.full((5,10), -3)
+        ba = np.concatenate((ba, malandro), axis=1)
+        print(ba)
+        input()
+
+        observations = np.concatenate((ba, players_board), axis=0)
+
+        return observations
+
+    '''
+    Entrada: Vazio
+    Saida: Uma matriz numpy 5x4 contendo o estado das fabricas -2 se estiver 
+    vazia senao a ceramica presente
+    '''
+    def _format_factories(self):
+        #Fabricas
+        fac = self.fab.get_factory_board()
+
+        #criando uma matrix 5x4
+        mtx = np.full((5,5), -2)
+
+        for i, f in enumerate(fac):
+            for j, tile in enumerate(f):
+                mtx[i][j] = tile
+
+        for i in range(5):
+            mtx[i][4] = -3
+
+        return mtx
+
+    '''
+    Entrada: Vazio
+    Saida: Uma matriz numpy 5x4 que representa o chao de fabrica com -2 senao 
+    preenchida com as ceramicas
+    '''
+    def _format_fac_floor(self):
+        #chao de fabrica
+        flr = self.fab.get_factory_floor()
+
+        #criando uma matriz 5x4
+        mtx = np.full((5,5), -2)
+
+        f = len(flr) #10
+        k = 0
+
+        for i in range(5):
+            for j in range(5):
+                mtx[i][j] = flr[k]
+                k += 1
+                if k == f:
+                    break
+            if k == f:
+                break
+
+        for i in range(5):
+            mtx[i][4] = -3
+
+        return mtx
+
+    '''
+    Entrada: Vazio
+    Saida: Uma matriz numpy 10x10 contendo o tabuleiro de ambos jogadores
+    '''
+    def _format_players(self):
+        ply = self.static_players[0]
+
+        # matriz representando os tabuleiro de todos os jogadores
+        mtx_ply = self._format_player_board(ply)
+
+        for p in range(1,len(self.players)):
+            ply = self.static_players[p]
+            mtx = self._format_player_board(ply)
+            mtx_ply= np.concatenate((mtx_ply,mtx), axis=1)
+
+        return mtx_ply
+
+
+
+    '''
+    Entrada: Player passado como parametro 
+    Saida: Uma matriz numpy 5x10 contendo a parede e as linhas adjacentes
+    '''
+    def _format_player_board(self, player):
+        '''
+        pego a wall -> converto em um 5x5 onde -1 eh vazio senao eh preenchido
+        pego as linhas adjacentes -> converto em um 5x5 onde -2 eh vazio, -3 eh
+        posiçao inexistente senao eh preenchido
+        concateno um em cima do outro
+        '''
+        # Recebe a parede e as linhas adjacentes do jogador
+        board    = player.get_tabuleiro()
+        adj_line = board.get_pattern()
+        wall     = board.get_wall()
+
+        #Criando duas matrizes 5x5
+        mtx_01 = np.full((5,5),-3) # Adj_lines
+        mtx_02 = np.full((5,5),-2) # Wall
+
+        #Convertendo adj_line -> mtx_01
+        for l, line in enumerate(adj_line):
+            for c, col in enumerate(line):
+                if col[1] == True:
+                    mtx_01[l][c] = col[0]
+                else:
+                    mtx_01[l][c] = -2
+
+        #Convertendo wall -> mtx_02
+        for l, line in enumerate(wall):
+            for c, col in enumerate(line):
+                if col[1] == True:
+                    mtx_02[l][c] = col[0]
+
+        #Concatenando as matrizes auxiliares
+        mtx_000 = np.concatenate((mtx_02, mtx_01), axis=1)
+
+        return mtx_000
+
 
 #End class --------------------------------------------------------------------

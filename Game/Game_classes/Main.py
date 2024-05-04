@@ -13,7 +13,6 @@ def main():
     fab = Fabrica.Fabrica()
     luiz = Jogador.Jogador("Luiz")
     vik = Jogador.Jogador("Viktor")
-    # jean = Jogador.Jogador("Jean")
 
     players = [luiz, vik]
     dados = [fab, fab.pocket, players]
@@ -31,9 +30,13 @@ def main():
     fab.factory_board[2] = []
     fab.factory_board[3] = []
     fab.factory_board[4] = [1,2,2,2]
-    '''
 
+    estado.format_fac_floor()
+    input('jajjajajja cabrom')
+    '''
     estado = Estados.Estados(dados)
+    estado.get_states()
+    input()
 
     while not estado.is_game_over():
         #start do game
@@ -48,7 +51,7 @@ def main():
                 print(p)
                 p.playar(fab)
                 print(p)
-                
+
                 print("-----------------------------------------------------------------------------------------------------------------------------------*")
                 if estado.is_last_round_to_end():
                     print("-----------------------------------------------------------------------------------------------------------------------------------*")
@@ -58,10 +61,6 @@ def main():
 
         #Colocar o player com o -1 no inicio da lista de jogadores
         estado.first_player()
-        print(players[0].name, players[1].name)
-
-
-
 
         #final do turno
         print("-----------------------------------------------------------------------------------------------------------------------------------*")
